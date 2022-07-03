@@ -17,9 +17,10 @@
   #
   # The pkgs installed using nix-env goes into $HOME/.nix-profile/lib
   users.users.espen.packages = with pkgs; [
-      sbcl lispPackages.clwrapper lispPackages.swank cmake ruby
-      gnome3.gnome-tweaks
-    ];
+    gnome3.gnome-tweaks
+    pandoc
+    python39
+  ];
 
   home-manager.users.espen = { config, pkgs, ... }: {
     home.username = "espen";
@@ -32,9 +33,11 @@
       };
     };
     # docker-compose nvidia-docker
-    home.packages = [ pkgs.python39 ];
+    home.packages = with pkgs; [
+          alacritty
+    ];
     # programs.bash.enable = true;
 
   };
-  
+
 }

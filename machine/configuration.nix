@@ -29,29 +29,35 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    bat
     emacs
+    feh
+    fzf
     git
     git-credential-gopass
-    gopass
+    gparted
     gnupg
+    gopass
+    htop
     neovim
+    ripgrep
+    sqlite
+    tree
+    sbcl lispPackages.clwrapper lispPackages.swank cmake ruby
     wget
-    (import /home/espen/emacs.nix { inherit pkgs; }) # TODO: bytte mappe
   ];
 
   fonts.fonts = with pkgs; [
-    # noto-fonts
-    # noto-fonts-cjk
-    # noto-fonts-emoji
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
     # liberation_ttf
-    # fira-code
+    fira-code
     # fira-code-symbols
     # mplus-outline-fonts
     # dina-font
     # proggyfonts
-
     anonymousPro
-
     # FIXME this has otf fonts
     source-code-pro
     # FIXME these have ttc fonts, and not even copied to /share/X11-fonts.

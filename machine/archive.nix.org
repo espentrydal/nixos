@@ -1,0 +1,166 @@
+  # for steam
+  #hardware.opengl.driSupport32Bit = true;
+  # hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [ libva ];
+  # hardware.opengl.extraPackages = with pkgs; [ libva ];
+  # https://github.com/NixOS/nixpkgs/issues/124308
+  # hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux;
+  #   [ libva ]
+  #   ++ lib.optionals config.services.pipewire.enable [ pipewire ];
+  #hardware.pulseaudio.support32Bit = true;
+
+/*
+  # taken from https://github.com/NixOS/nixpkgs/issues/70536
+  # nixpkgs.overlays = [
+  #   (self: super: {
+  #     cudatoolkit = super.cudatoolkit_10;
+  #     cudnn = super.cudnn_cudatoolkit_10;
+  #     # FIXME cudnn is not recognized, see https://github.com/NixOS/nixpkgs/issues/20649
+  #     julia = super.callPackage ./julia.nix {};
+  #     emacs = super.emacs.override {
+  #       imagemagick = super.imagemagick;
+  #     };
+  #     veewee = super.callPackage ../pkgs/veewee {};
+  #   })];
+
+  users.users.espen.packages =
+    with pkgs;
+/*    let
+      my-python-packages = ps: with ps; [
+        pip virtualenvwrapper
+        setuptools
+        # tensorflow depends on h5py. However, h5py requires libhdf5.so, and pip
+        # install cannot find it
+        h5py
+        # packages that cannot be installed via pip
+        scipy numpy pandas matplotlib
+
+        # all packages
+        tqdm
+        imageio
+        python-igraph
+
+        # FIXME why this ipython has no problem finding all the packages, but
+        # jupyter notebook cannot find?
+        ipython
+        # ipywidgets is important, otherwise jupyter notebook cannot work well with tqdm
+        ipywidgets
+        # notebook
+
+        # FIXME pytorch
+        # pytorch
+        # FIXME is this built with cuda 9 or 10? using my overlay?
+        # FIXME this is very slow to install, seems to be compiling cuda
+        pytorchWithCuda
+        # torchvision
+
+        # TODO tensorflow
+        # tf 2.0 https://github.com/NixOS/nixpkgs/pull/70910
+        # tensorflowWithCuda
+
+        # I'm using sphinx as a standalone app
+        sphinx
+      ];
+*/
+/*
+      # torchvision caused collision, temporarily fixing
+      # https://stackoverflow.com/questions/52941074/in-nixos-how-can-i-resolve-a-collision
+      python-with-my-packages = (pkgs.python3.withPackages my-python-packages).override
+        (args: { ignoreCollisions = true; });
+      R-with-my-packages = pkgs.rWrapper.override{
+        packages = with pkgs.rPackages; [
+          ggplot2 dplyr xts
+          pcalg Rgraphviz bnlearn
+        ];
+      };
+
+      # Several annoying issue about this approach:
+      # 1. wheneven I add a package, the jupyter is rebuilt
+      # 2. I have to have ipykernel here
+      myPythonEnv = python3.buildEnv.override {
+        extraLibs = with python3.pkgs;
+          [ ipykernel ] ++ my-python-packages python3.pkgs;
+      };
+
+      myJupyter = pkgs.jupyter.override {
+        definitions = {
+          python3 = {
+            displayName = "my Python 3";
+            argv = [
+              # FIXME this is quite ugly
+              "${myPythonEnv.interpreter}"
+              "-m"
+              "ipykernel_launcher"
+              "-f"
+              "{connection_file}"
+            ];
+            logo32 = "${myPythonEnv.sitePackages}/ipykernel/resources/logo-32x32.png";
+            logo64 = "${myPythonEnv.sitePackages}/ipykernel/resources/logo-64x64.png";
+            language = "python";
+          };
+        };
+      };
+
+      # XXX I should not install from a URL
+      #
+      # XXX But this project is pretty good for:
+      # 1. put a shell.nix in the python project, and launch a notebook. This is essentially virtual-env
+      # 2. Haskell and other kernels
+      #jupyter-with = import (builtins.fetchGit {
+      #  url = https://github.com/tweag/jupyterWith;
+      #  rev = "";
+      #});
+
+      # XXX this is not a package, but a function!! ??
+      myjupyter = jupyter-with.jupyterWith {
+        extraPackages = p: [p.numpy];
+      };
+    in
+  */
+      with pkgs; [
+        # languages
+        sbcl lispPackages.clwrapper lispPackages.swank cmake ruby
+        # libraries
+        # veewee
+
+        # myjupyter
+        # jupyter
+
+	# utilities
+        # silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar libtool msmtp
+
+	# X11
+        # rxvt_unicode konsole tigervnc xorg.xmodmap gnome3.gnome-screenshot mplayer
+
+	# FIXME cuda
+        # cudatoolkit cudnn
+
+	# I shall NOT put virtualbox here, otherwise error "kernel driver not
+        # accessible": https://github.com/NixOS/nixops/issues/370
+        # vagrant imagemagick librsvg steam-run evince
+
+	# steam chromium qemu texlive.combined.scheme-full
+        # steam
+        #vscode
+        gnome3.gnome-tweaks
+      ];
+*/
+
+  # # from https://nixos.wiki/wiki/Cron
+  # services.cron.enable = true;
+  # # FIXME what about services.cron.cronFiles
+  # services.cron.systemCronJobs = [
+  #   # "0 4 * * * /home/hebi/git/hn-top/job.sh"
+
+  #   # 1. you need the user name
+  #   # 2. you need to load the profile to have correct bash path
+  #   # crontab -l won't reveal anything
+  #   "0 4 * * * hebi . /etc/profile; bash /home/hebi/git/hn-top/job.sh"
+
+  #   # "*/1 * * * *      hebi    date >> /tmp/cron-hebi.log"
+
+  #   # FIXME do I need to setup the environment so that it can find /bin/bash?,
+  #   # It needs to use my username of course
+  #   #
+  #   # "0 4 * * * hebi . /etc/profile; /home/hebi/git/hn-top/job.sh"
+  # ];
+

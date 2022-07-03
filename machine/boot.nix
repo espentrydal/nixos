@@ -13,7 +13,8 @@
        efiSysMountPoint = "/boot/efi";
      };
      grub = {
-       devices =[ "nodev" ];
+       default = "saved";
+       devices = [ "nodev" ];
        efiSupport = true;
        enable = true;
        extraEntries = ''

@@ -12,8 +12,10 @@ let
 in
 {
   imports =
-    [ ./hardware-configuration.nix
-      ./boot.nix
+    [ #./hardware-configuration.nix
+      ./hardware-virtualbox.nix
+      #./boot.nix
+      ./virtualbox.nix
       ./home-users.nix
       ./x11.nix
       ../nixos/window-manager.nix

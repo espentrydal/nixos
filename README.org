@@ -2,7 +2,7 @@
 (taken from https://github.com/lihebi/nixos.git)
 
 #+begin_example
-sudo nixos-rebuild switch -I nixos-config=./configuration.nix
+sudo nixos-rebuild switch -I nixos-config=./machine/configuration.nix
 #+end_example
 
 All subsequent build will honor that path, i.e.

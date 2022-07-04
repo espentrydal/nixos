@@ -1,15 +1,18 @@
 {
 
-  # FIXME this works for WM and chrome, but does not seem to work for xterm and
+  services.xserver.enable = true;
+
+  #services.xserver.displayManager.gdm.enable = true;
+  #services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.desktopManager.xfce.enable = true;
+  services.xserver.windowManager.stumpwm.enable = true;
+
+# FIXME this works for WM and chrome, but does not seem to work for xterm and
   # urxvt. Thus I'm currently still using .Xresources
   services.xserver.dpi = 144;
   #services.xserver.videoDrivers = [ "nvidia" ];
-  services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.windowManager.stumpwm.enable = true;
 
   # Configure keymap in X11
   services.xserver = {

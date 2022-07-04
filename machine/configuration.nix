@@ -13,9 +13,9 @@ in
 {
   imports =
     [ #./hardware-configuration.nix
-      ./hardware-virtualbox.nix
+      ./hardware-vmware.nix
       #./boot.nix
-      ./virtualbox.nix
+      ./vmware.nix
       ./home-users.nix
       ./x11.nix
       ../nixos/window-manager.nix
@@ -26,7 +26,7 @@ in
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
     # TODO when I want to manage multiple machines via NixOS, using hostname is a great option
     # "nixos-config=/path/to/machines/${config.networking.hostName}/configuration.nix"
-    "nixos-config=/home/espen/nixos/machine/configuration.nix" ];
+    "nixos-config=/home/espen/34_01-linux-home/nixos/machine/configuration.nix" ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

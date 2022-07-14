@@ -49,6 +49,14 @@ in
     wget
   ];
 
+  services.emacs.package = pkgs.emacsGitNativeComp;
+  services.emacs.enable = true;
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    }))
+  ];
+
   fonts.fonts = with pkgs; [
     noto-fonts
     noto-fonts-cjk

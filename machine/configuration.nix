@@ -12,13 +12,12 @@ let
 in
 {
   imports =
-    [ #./hardware-configuration.nix
-      ./hardware-vmware.nix
-      #./boot.nix
-      ./vmware.nix
+    [ ./hardware-configuration.nix
+      ./boot.nix
       ./home-users.nix
       ./x11.nix
-      ../nixos/window-manager.nix
+      #./stumpwm.nix
+      ./flashback-xmonad.nix
       (import "${home-manager}/nixos")
     ];
 
@@ -49,13 +48,15 @@ in
     wget
   ];
 
-  services.emacs.package = pkgs.emacsGitNativeComp;
   services.emacs.enable = true;
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-    }))
-  ];
+  #services.emacs.package = import /home/espen/.emacs.d { pkgs = pkgs; };
+
+  # services.emacs.package = pkgs.emacsGitNativeComp;
+  # nixpkgs.overlays = [
+  #   (import (builtins.fetchTarball {
+  #     url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+  #   }))
+  # ];
 
   fonts.fonts = with pkgs; [
     noto-fonts
@@ -82,7 +83,7 @@ in
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  networking.hostName = "mainframe-nixos"; # Define your hostname.
+  networking.hostName = "thinkpad-nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -92,6 +93,11 @@ in
   # Enable networking
   networking.networkmanager.enable = true;
   systemd.services.NetworkManager-wait-online.enable = false;
+  networking.wireless.networks = {
+    Get-D445A3 = {
+      pskRaw="665af6c0e84f5c29d57e3abcb57ee62002392fb38546e16bc78c2a51d5fcf4b4";
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Oslo";
@@ -147,17 +153,17 @@ in
     mv -f /lib64/ld-linux-x86-64.so.2.tmp /lib64/ld-linux-x86-64.so.2 # atomically replace
   '';
 
+  services.udev.extraRules = '' ACTION=="add", SUBSYSTEMS=="usb", SUBSYSTEM=="block", ENV{ID_FS_USAGE}=="filesystem", RUN{program}+="${pkgs.systemd}/bin/systemd-mount --no-block --automount=yes --collect $devnode /media" '';
+
   nix.gc.automatic = true;
   nix.gc.dates = "weekly";
 
   # do not sleep. FIXME it seems that it sleeps when I switched to gdm.
   powerManagement.enable = false;
 
-  # virtualbox
-  virtualisation.virtualbox.host.enable = true;
-  users.extraGroups.vboxusers.members = [ "espen" ];
-
-  virtualisation.docker.enable = true;
+  # virtualisation.virtualbox.host.enable = true;
+  # users.extraGroups.vboxusers.members = [ "espen" ];
+  #virtualisation.docker.enable = true;
   #virtualisation.docker.enableNvidia = true;
 
   # This value determines the NixOS release from which the default

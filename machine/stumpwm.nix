@@ -1,5 +1,7 @@
 { config, lib, ... }:
 
+services.xserver.windowManager.stumpwm.enable = true;
+
 # for singleton
 with lib;
 

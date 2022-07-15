@@ -30,14 +30,22 @@
       userEmail = "espen@trydal.io";
       extraConfig = {
         credential.helper = "gopass";
+        init.defaultBranch = "main";
       };
     };
+    # programs.bash.enable = true;
+    programs.zsh.enable = true;
+    programs.zsh.enableAutosuggestions = true;
+    programs.zsh.oh-my-zsh = {
+      enable = true;
+      plugins = [ "git" "python" "man" ];
+      theme = "agnoster";
+    };
+
     # docker-compose nvidia-docker
     home.packages = with pkgs; [
           alacritty
     ];
-    # programs.bash.enable = true;
-
   };
 
 }

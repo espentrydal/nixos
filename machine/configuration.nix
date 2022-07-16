@@ -27,12 +27,15 @@ in
     # "nixos-config=/path/to/machines/${config.networking.hostName}/configuration.nix"
     "nixos-config=/home/espen/34_01-linux-home/nixos/machine/configuration.nix" ];
 
+  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-22.05/";
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     bat
     emacs
     feh
+    firefox
     fzf
     git
     git-credential-gopass
@@ -40,8 +43,11 @@ in
     gnupg
     gopass
     htop
+    mosh
     neovim
+    pciutils
     ripgrep
+    rpi-imager
     sqlite
     tailscale
     tree
@@ -50,6 +56,13 @@ in
     wget
     zotero
   ];
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+  };
+
 
   services.emacs.enable = true;
   #services.emacs.package = import /home/espen/.emacs.d { pkgs = pkgs; };

@@ -10,7 +10,7 @@
   # FIXME this works for WM and chrome, but does not seem to work for xterm and
   # urxvt. Thus I'm currently still using .Xresources
   services.xserver.dpi = 144;
-  services.xserver.videoDrivers = [ "nvidia" ];
+  #services.xserver.videoDrivers = [ "nvidia" ];
 
 
   # Configure keymap in X11
@@ -20,7 +20,7 @@
   };
 
   # Enable automatic login for the user.
-  services.xserver.displayManager.autoLogin.enable = true;
+  services.xserver.displayManager.autoLogin.enable = false;
   services.xserver.displayManager.autoLogin.user = "espen";
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229

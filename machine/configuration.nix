@@ -17,7 +17,7 @@ in
       ./home-users.nix
       ./x11.nix
       #./stumpwm.nix
-      ./flashback-xmonad.nix
+      #./flashback-xmonad.nix
       (import "${home-manager}/nixos")
     ];
 
@@ -43,9 +43,12 @@ in
     neovim
     ripgrep
     sqlite
+    tailscale
     tree
     sbcl lispPackages.clwrapper lispPackages.swank cmake ruby
+    vivaldi
     wget
+    zotero
   ];
 
   services.emacs.enable = true;
@@ -146,6 +149,20 @@ in
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  # enable the tailscale daemon; this will do a variety of tasks:
+  # 1. create the TUN network device
+  # 2. setup some IP routes to route through the TUN
+  services.tailscale = { enable = true; };
+  # Let's open the UDP port with which the network is tunneled through
+  networking.firewall.allowedUDPPorts = [ 41641 ];
+  # Disable SSH access through the firewall
+  # Only way into the machine will be through
+  # This may cause a chicken & egg problem since you need to register a machine
+  # first using `tailscale up`
+  # Better to rely on EC2 SecurityGroups
+  services.openssh.openFirewall = false;
+  networking.firewall.checkReversePath = "loose";
 
   system.activationScripts.ldso = lib.stringAfter [ "usrbinenv" ] ''
     mkdir -m 0755 -p /lib64

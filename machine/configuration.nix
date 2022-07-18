@@ -9,10 +9,16 @@ let
     url = "https://github.com/rycee/home-manager.git";
     ref = "release-22.05";
   };
+  nixos-hardware = builtins.fetchGit {
+    url = "https://github.com/espentrydal/nixos-hardware.git";
+    ref = "master";
+  };
 in
 {
   imports =
-    [ ./hardware-configuration.nix
+    [
+      (import "${nixos-hardware}/lenovo/thinkpad/x1-extreme/gen1")
+      ./hardware-configuration.nix
       ./boot.nix
       ./home-users.nix
       ./x11.nix
@@ -62,7 +68,8 @@ in
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
   };
-
+  hardware.opengl.driSupport32Bit = true;
+  hardware.pulseaudio.support32Bit = true;
 
   services.emacs.enable = true;
   #services.emacs.package = import /home/espen/.emacs.d { pkgs = pkgs; };
@@ -96,17 +103,26 @@ in
   # fonts.fontDir.enable = true;
   fonts.enableDefaultFonts = true;
 
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.tarball-ttl = 0;
+  nixpkgs.config.tarballTtl = 0;
+  nix.extraOptions = ''
+    tarball-ttl = 0
+    narinfo-cache-negative-ttl = 0
+    narinfo-cache-positive-ttl = 0
+  '';
 
   networking.hostName = "thinkpad-nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  services.acpid.enable = true;
+  powerManagement.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
+  #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
   networking.networkmanager.enable = true;
   systemd.services.NetworkManager-wait-online.enable = false;
   networking.wireless.networks = {
@@ -187,9 +203,6 @@ in
 
   nix.gc.automatic = true;
   nix.gc.dates = "weekly";
-
-  # do not sleep. FIXME it seems that it sleeps when I switched to gdm.
-  powerManagement.enable = false;
 
   # virtualisation.virtualbox.host.enable = true;
   # users.extraGroups.vboxusers.members = [ "espen" ];

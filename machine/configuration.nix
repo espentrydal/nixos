@@ -18,7 +18,7 @@ in
   imports =
     [
       (import "${nixos-hardware}/lenovo/thinkpad/x1-extreme/gen1")
-      ./hardware-configuration.nix
+      /etc/nixos/hardware-configuration.nix
       ./boot.nix
       ./home-users.nix
       ./x11.nix
@@ -27,13 +27,28 @@ in
       (import "${home-manager}/nixos")
     ];
 
-  nix.nixPath = [
-    "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-    # TODO when I want to manage multiple machines via NixOS, using hostname is a great option
-    # "nixos-config=/path/to/machines/${config.networking.hostName}/configuration.nix"
-    "nixos-config=/home/espen/34_01-linux-home/nixos/machine/configuration.nix" ];
-
   system.autoUpgrade.channel = "https://nixos.org/channels/nixos-22.05/";
+
+  nix = {
+    nixPath = [
+      "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
+      # "nixos-config=/path/to/machines/${config.networking.hostName}/configuration.nix"
+      "nixos-config=/home/espen/34_01-linux-home/nixos/machine/configuration.nix" ];
+    package = pkgs.nixFlakes;
+    extraOptions = ''
+                 experimental-features = nix-command flakes
+
+                 tarball-ttl = 0
+                 narinfo-cache-negative-ttl = 0
+                 narinfo-cache-positive-ttl = 0
+                 '';
+    gc.automatic = true;
+    gc.dates = "weekly";
+  };
+
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.tarball-ttl = 0;
+  nixpkgs.config.tarballTtl = 0;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -103,15 +118,6 @@ in
   # fonts.fontDir.enable = true;
   fonts.enableDefaultFonts = true;
 
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.tarball-ttl = 0;
-  nixpkgs.config.tarballTtl = 0;
-  nix.extraOptions = ''
-    tarball-ttl = 0
-    narinfo-cache-negative-ttl = 0
-    narinfo-cache-positive-ttl = 0
-  '';
-
   networking.hostName = "thinkpad-nixos"; # Define your hostname.
   services.acpid.enable = true;
   powerManagement.enable = true;
@@ -129,14 +135,31 @@ in
     Get-D445A3 = {
       pskRaw="665af6c0e84f5c29d57e3abcb57ee62002392fb38546e16bc78c2a51d5fcf4b4";
     };
+    Markblomst = {
+      pskRaw="8b3583b1fd3dbc24776d65a204f32bfb90a699ddeb0677bb2ea5f4456266942c";
+    };
   };
+
+  # services.openssh.enable = true;
+  # Open ports in the firewall.
+  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
+
+  # enable the tailscale daemon; this will do a variety of tasks:
+  # 1. create the TUN network device
+  # 2. setup some IP routes to route through the TUN
+  services.tailscale = { enable = true; };
+  networking.firewall.allowedUDPPorts = [ 41641 ];
+  # Disable SSH access through the firewall
+  services.openssh.openFirewall = false;
+  networking.firewall.checkReversePath = "loose";
 
   # Set your time zone.
   time.timeZone = "Europe/Oslo";
-
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.utf8";
-
   # Configure console keymap
   console.keyMap = "no";
 
@@ -154,44 +177,16 @@ in
     pulse.enable = true;
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
 
- # Some programs need SUID wrappers, can be configured further or are
+  # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   programs.mtr.enable = true;
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
   };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # enable the tailscale daemon; this will do a variety of tasks:
-  # 1. create the TUN network device
-  # 2. setup some IP routes to route through the TUN
-  services.tailscale = { enable = true; };
-  # Let's open the UDP port with which the network is tunneled through
-  networking.firewall.allowedUDPPorts = [ 41641 ];
-  # Disable SSH access through the firewall
-  # Only way into the machine will be through
-  # This may cause a chicken & egg problem since you need to register a machine
-  # first using `tailscale up`
-  # Better to rely on EC2 SecurityGroups
-  services.openssh.openFirewall = false;
-  networking.firewall.checkReversePath = "loose";
 
   system.activationScripts.ldso = lib.stringAfter [ "usrbinenv" ] ''
     mkdir -m 0755 -p /lib64
@@ -200,9 +195,6 @@ in
   '';
 
   services.udev.extraRules = '' ACTION=="add", SUBSYSTEMS=="usb", SUBSYSTEM=="block", ENV{ID_FS_USAGE}=="filesystem", RUN{program}+="${pkgs.systemd}/bin/systemd-mount --no-block --automount=yes --collect $devnode /media" '';
-
-  nix.gc.automatic = true;
-  nix.gc.dates = "weekly";
 
   # virtualisation.virtualbox.host.enable = true;
   # users.extraGroups.vboxusers.members = [ "espen" ];

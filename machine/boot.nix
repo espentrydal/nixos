@@ -1,34 +1,19 @@
 {
   # Bootloader.
-  #boot.loader.systemd-boot.enable = true;
-  #boot.loader.efi.canTouchEfiVariables = true;
-  #boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
   #boot.cleanTmpDir = true;
   #boot.tmpOnTmpfs = true;
 
-  boot.loader = {
-     efi = {
-       canTouchEfiVariables = true;
-       efiSysMountPoint = "/boot/efi";
-     };
-     grub = {
-       default = "saved";
-       devices = [ "nodev" ];
-       efiSupport = true;
-       enable = true;
-       extraEntries = ''
-         menuentry "Windows" {
-	  insmod part_gpt
-	  insmod fat
-	  insmod search_fs_uuid
-	  insmod chain
-	  search --fs-uuid --set=root 72F8-2745
-	  chainloader /EFI/Microsoft/Boot/bootmgfw.efi
-        }
-      '';
-      version = 2;
-    };
+  # Setup keyfile
+  boot.initrd.secrets = {
+    "/crypto_keyfile.bin" = null;
   };
+
+  # Enable swap on luks
+  boot.initrd.luks.devices."luks-f6329525-fe75-4e9c-bc99-d60c7f587217".device = "/dev/disk/by-uuid/f6329525-fe75-4e9c-bc99-d60c7f587217";
+  boot.initrd.luks.devices."luks-f6329525-fe75-4e9c-bc99-d60c7f587217".keyFile = "/crypto_keyfile.bin";
 
 }

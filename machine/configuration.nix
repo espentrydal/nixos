@@ -27,8 +27,6 @@ in
       (import "${home-manager}/nixos")
     ];
 
-  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-22.05/";
-
   nix = {
     nixPath = [
       "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
@@ -50,10 +48,13 @@ in
   nixpkgs.config.tarball-ttl = 0;
   nixpkgs.config.tarballTtl = 0;
 
+  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-22.05/";
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     bat
+    clojure
     emacs
     feh
     firefox
